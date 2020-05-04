@@ -14,5 +14,8 @@ app.use(cors());
 //Add MongoDB connection
 
 //Call the routes
+app.get('/', (req, res) => {
+    res.send('Hello World');
+});
 
 app.listen(port, () => console.log(`Server started on ${port}...`));
