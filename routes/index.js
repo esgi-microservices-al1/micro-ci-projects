@@ -2,7 +2,7 @@
 
 class RouterBuilder {
     build(app) {
-        app.user('/project', require('./project.router'));
+        app.use('/project', require('./project.router'));
     }
 }
 

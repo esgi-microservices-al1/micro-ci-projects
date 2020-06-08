@@ -18,7 +18,7 @@ class ProjectController {
         project.git_url = gitUrl;
 
         try {
-            return await project.save;
+            return await project.save();
         } catch(err) {
             return undefined;
         }
