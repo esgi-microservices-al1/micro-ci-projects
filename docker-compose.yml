@@ -15,8 +15,8 @@ services:
         ports:
             - 27017:27017
         environment:
-            MONGO_INITDB_ROOT_USERNAME: root
-            MONGO_INITDB_ROOT_PASSWORD: example
+            MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
+            MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
 
     mongo-express:
         image: mongo-express
@@ -26,5 +26,5 @@ services:
         depends_on:
             - mongo
         environment:
-            ME_CONFIG_MONGODB_ADMINUSERNAME: root
-            ME_CONFIG_MONGODB_ADMINPASSWORD: example
+            ME_CONFIG_MONGODB_ADMINUSERNAME: ${DB_USER}
+            ME_CONFIG_MONGODB_ADMINPASSWORD: ${DB_PASSWORD}
