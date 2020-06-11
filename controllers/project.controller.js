@@ -16,6 +16,7 @@ class ProjectController {
         const project = new Project();
         project.label = label;
         project.git_url = gitUrl;
+        project.enable = false;
 
         try {
             return await project.save();

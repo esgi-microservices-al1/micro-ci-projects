@@ -10,6 +10,9 @@ const projectSchema = mongoose.Schema({
     },
     storage_url: {
         type: String
+    },
+    enable: {
+        type: Boolean
     }
 });
 
