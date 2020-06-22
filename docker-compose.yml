@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-=======
-<<<<<<< Updated upstream
-=======
->>>>>>> 896822f9938699b7301aa63af71aba8b12a7c40e
 version: '3'
 
 services:
@@ -16,11 +11,7 @@ services:
         image: mongo
         restart: always
         volumes:
-<<<<<<< HEAD
-            - './data:/data/db'
-=======
             - 'mongo-data:/data/db'
->>>>>>> 896822f9938699b7301aa63af71aba8b12a7c40e
         ports:
             - 27017:27017
         environment:
@@ -37,9 +28,5 @@ services:
         environment:
             ME_CONFIG_MONGODB_ADMINUSERNAME: ${DB_USER}
             ME_CONFIG_MONGODB_ADMINPASSWORD: ${DB_PASSWORD}
-<<<<<<< HEAD
-=======
 volumes:
     mongo-data:
->>>>>>> Stashed changes
->>>>>>> 896822f9938699b7301aa63af71aba8b12a7c40e
