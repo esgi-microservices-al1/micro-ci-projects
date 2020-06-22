@@ -2,6 +2,7 @@
 
 ### First time you clone the project?
 Please make sure to ask the .env file to another developer to have all configuration needed.
+You can also ask for another developer his data folder to have the same.
 
 ### Run the project
 
