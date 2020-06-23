@@ -26,6 +26,7 @@
     "mongoose": "^5.9.10"
   },
   "devDependencies": {
+    "@types/amqplib": "^0.5.13",
     "dotenv": "^8.2.0",
     "nodemon": "^2.0.3"
   }
