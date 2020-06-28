@@ -82,3 +82,4 @@ web_modules/
 .yarn/unplugged
 .yarn/build-state.yml
 .pnp.*
+enabled_plugins
