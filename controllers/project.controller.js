@@ -1,5 +1,7 @@
 'use strict';
 
+const publisherService = require('../service/publisher.service');
+
 const Project = require('../models').Project;
 
 class ProjectController {
@@ -46,6 +48,38 @@ class ProjectController {
         }
     }
 
+    async getByRepository(repository) {
+        try {
+            return await Project.find({ git_url: repository});
+        } catch (err) {
+            return undefined;
+        }
+    }
+    
+    async getByLabel(label) {
+        try {
+            return await Project.find( {label: label} );
+        } catch (err) {
+            return undefined;
+        }
+    }
+
+    async webHookProcess(data) {
+        if (!data || !data.repository_name) {
+            return
+        }
+        const project = this.getByRepository(data.repository_name);
+        if (project == undefined) {
+            return
+        }
+        //TODO pull project in volume
+        publisherService.publishToQueue(process.env.AMQP_PUBLISH_QUEUE_NAME, project)
+    }
+
+    async scheduler(data) {
+        const project = this.getByLabel(data.projectName);
+        
+    } 
 }
 
 module.exports = new ProjectController();
