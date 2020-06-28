@@ -7,9 +7,11 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const RouterBuilder = require('./routes');
+const ConsumerService = require('./service/consumer.service');
 
 dotenv.config();
 
+// //add Rabbitmq Consume Queue Service
 const port = process.env.PORT || 3000;
 
 const app = express();
@@ -28,5 +30,11 @@ mongoose
     .catch(() => console.error("Database connection failed!"));
 
 RouterBuilder.build(app)
+try {
+    ConsumerService.consumeWebHookQueue(process.env.AMQP_WEBHOOK_QUEUE_NAME)
+} catch (ex) {
+    console.log(ex)
+}
+
 
 app.listen(port, () => console.log(`Server started on ${port}...`));
