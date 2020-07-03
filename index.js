@@ -8,6 +8,9 @@ const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const RouterBuilder = require('./routes');
 const ConsumerService = require('./service/consumer.service');
+const consul = require('./consul/consul');
+
+consul.register();
 
 dotenv.config();
 
@@ -38,6 +41,8 @@ try {
 } catch (ex) {
     console.log(ex);
 }
+
+
 
 
 app.listen(port, () => console.log(`Server started on ${port}...`));
