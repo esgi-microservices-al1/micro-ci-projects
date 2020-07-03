@@ -10,8 +10,6 @@ const RouterBuilder = require('./routes');
 const ConsumerService = require('./service/consumer.service');
 const consul = require('./consul/consul');
 
-consul.register();
-
 dotenv.config();
 
 // //add Rabbitmq Consume Queue Service
@@ -34,6 +32,7 @@ mongoose
 
 RouterBuilder.build(app)
 
+consul.register();
 
 try {
     ConsumerService.consumeWebHookQueue(process.env.AMQP_WEBHOOK_QUEUE_NAME);

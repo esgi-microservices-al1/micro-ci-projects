@@ -1,35 +1,47 @@
 'use strict';
 
+const port = Number(process.env.CONSUL_PORT);
+
 const consul = require('consul')({
     host: process.env.CONSUL_HOST,
-    port: process.env.CONSUL_PORT
+    port: Number(process.env.CONSUL_PORT)
 });
+
+
+console.log(process.env.CONSUL_HOST + ':' + process.env.CONSUL_PORT);
+
 const uuid = require('uuid');
 
 const details = {
     name: process.env.APPLICATION_NAME,
-    address: process.env.HOST,
-    port: process.env.PORT,
+    address: process.env.HOST || 'localhost',
+    port: Number(process.env.PORT),
     id: `${process.env.APPLICATION_NAME}-${uuid.v4()}`,
     check: {
         ttl: '10s',
         deregister_critical_service_after: '1m'
     },
     tags : [
-        'Test Consul For Project Micro Service'
+        'Test Consul For Project Micro Service',
     ],
     token: process.env.CONSUL_TOKEN
 };
 
 
 const register = () => {
+    console.log('REGISTER');
     consul.agent.service.register(details, err => {
-        if (err) { console.log(err.message, err.stack); }
-        else { console.log('consul good'); }
+        console.log(details);
+        if (err) { 
+            console.log(err.message, err.stack); 
+            console.log("ERRRRREUUUUUUR")
+        }
+        else { console.log('consul good zkqhdkqz'); }
     });
 };
 
 const healthCheck = (serviceId) => {
+    console.log('HEALTHCHECK');
     const jsonId = { id: `service:${serviceId}`, token: process.env.CONSUL_TOKEN };
 
     setInterval(() => {
