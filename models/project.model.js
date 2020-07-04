@@ -6,7 +6,21 @@ const projectSchema = mongoose.Schema({
         type: String
     },
     git_url: {
-        type: String
+        type: String,
+        unique: true,
+        required: true
+    },
+    access_token: {
+        type: String,
+        unique: false
+    },
+    git_host: {
+        type: String,
+        enum: ['github', 'gitlab'],
+        required: true
+    },
+    branches: {
+        type: [String]
     },
     storage_url: {
         type: String

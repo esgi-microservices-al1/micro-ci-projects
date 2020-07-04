@@ -26,11 +26,11 @@ router.get('/:id', async (req, res, next) => {
 });
 
 router.post('/', async(req, res, next) => {
-    if (!req.body.label || !req.body.gitUrl) {
+    if (!req.body.label || !req.body.gitUrl || !req.body.gitHost) {
         return res.status(400).end();
     }
 
-    const project = await ProjectController.add(req.body.label, req.body.gitUrl);
+    const project = await ProjectController.add(req.body.label, req.body.gitUrl, req.body.accessToken, req.body.gitHost);
     if (project === undefined) {
         return res.status(409).end();
     }
@@ -39,13 +39,16 @@ router.post('/', async(req, res, next) => {
 
 
 router.post('/test', async(req, res, next) => {
-    const test = '{"projectname": "test", "projectpath":"/volume42", "datecreation":"24/06/2020"}'
     try {
-        await PublisherService.publishToQueue(process.env.AMQP_WEBHOOK_QUEUE_NAME, test);
-        res.data = {"message-sent":true};
-        res.status(200).send({ status: true, response: res.data});
-    } catch (ex) {
-        res.status(500).end()
+        try {
+            await PublisherService.publishToQueue(process.env.AMQP_WEBHOOK_QUEUE_NAME, req.body.gitUrl);
+            res.data = {"message-sent":true};
+            res.status(200).send({ status: true, response: res.data});
+        } catch (ex) {
+            res.status(500).end()
+        }
+    } catch (error) {
+        return res.status(404);
     }
 })
 

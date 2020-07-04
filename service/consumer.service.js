@@ -37,9 +37,9 @@ exports.consumeWebHookQueue = (queueName) => {
             channel.assertQueue(queueName);
 
             channel.consume(queueName, async (msg) => {
-                const input = JSON.parse(msg.content.toString());
+                const input = msg.content;
                 await ProjectController.webHookProcess(input);
-                console.log(`[x] Received ${JSON.stringify(input)}`);
+                console.log(`[x] Received ${input}`);
                 channel.ack(msg);
             })
         });
