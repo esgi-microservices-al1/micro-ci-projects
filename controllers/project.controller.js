@@ -5,6 +5,8 @@ const publisherService = require('../service/publisher.service');
 const Project = require('../models').Project;
 
 const { exec } = require('child_process');
+const util = require('util');
+const asyncExec = util.promisify(require('child_process').exec);
 
 class ProjectController {
 
@@ -16,7 +18,6 @@ class ProjectController {
         if (await Project.findOne({git_url: gitUrl})) {
             return undefined;
         }
-        console.log(accessToken);
 
         const project = new Project({
             label: label,
@@ -52,7 +53,8 @@ class ProjectController {
 
     async getById(id) {
         try {
-            return await Project.findById(id);
+            const project = await Project.findById(id);
+            return project;
         } catch(err) {
             return undefined;
         }
@@ -74,6 +76,17 @@ class ProjectController {
         }
     }
 
+    async addProjectBranches(projectId) {
+        const project = await Project.findById(projectId);
+        try {
+            const branches = await this.getBranches(project);
+            project.branches = branches;
+        } catch (error) {
+            return error;
+        }
+        return project.save();
+    }
+
     async webHookProcess(url) {
         if (!url) {
             console.error("No url was given!");
@@ -88,65 +101,83 @@ class ProjectController {
         return;
     }
 
-    async cloneProject(project) {
-        console.log(`\n${project}\n`);
-        exec(`cd ../projects && ls`, (error, stdout, stderr) => {
-            if (error) {
-                console.log(`error: ${error.message}`);
-                return;
-            }
-            if (stderr) {
-                console.log(`stderr: ${stderr}`);
-                return;
-            }
-            if (stdout.indexOf(project._id) !== -1) {
-                console.error(`Project with url: ${project.git_url}, already exists`);
-                return;
-            } else {
-                let cloneUrl = new String(project.git_url);
-                if (project.access_token) {
-                    if (project.gitHost === 'github') {
-                        cloneUrl = cloneUrl.replace("https://", `https://${project.access_token}@`);
-                    } else {
-                        cloneUrl = cloneUrl.replace("https://", `https://oauth2:${project.access_token}@`);
-                    }
-                }
+    commandsError(error, stderr) {
+        if (error) {
+            console.log(`error: ${error.message}`);
+            return;
+        }
+        if (stderr) {
+            console.log(`stderr: ${stderr}`);
+            return;
+        }
+    }
 
-                exec(`cd .. && mkdir -p projects && cd projects && git clone ${cloneUrl} ${project._id}`, (error, stdout, stderr) => {
-                    if (error) {
-                        console.log(`error: ${error.message}`);
-                        return;
-                    }
-                    if (stderr) {
-                        console.log(`stderr: ${stderr}`);
-                        return;
-                    }
-                    console.log(`stdout: ${stdout}`);
-                });
+    async projectsFolderExists() {
+        const { stdout, stderr, error } = await asyncExec('ls -a /');
+        this.commandsError(error, stderr);
+        if (stdout.indexOf('projects') === -1) {
+            exec('cd / && mkdir -p projects', (error, stderr, stdout) => {
+                this.commandsError(error, stderr);
+                console.log(stdout);
+                return;
+            })
+        }
+        return;
+    }
+
+    async checkProjectRepositoryExists(project) {
+        const { stdout, stderr, error } = await asyncExec('cd /projects && ls');
+        this.commandsError(error, stderr);
+        if (stdout.indexOf(project._id) !== -1) {
+            console.error(`Project with url: ${project.git_url}, already exists`);
+            return true;
+        }
+        return false;
+    }
+
+    async cloneProject(project) {
+        if (await this.checkProjectRepositoryExists(project)) {
+            console.error(`Project with url: ${project.git_url}, already exists`);
+            return;
+        }
+        let cloneUrl = new String(project.git_url);
+        if (project.access_token) {
+            if (project.gitHost === 'github') {
+                cloneUrl = cloneUrl.replace("https://", `https://${project.access_token}@`);
+            } else {
+                cloneUrl = cloneUrl.replace("https://", `https://oauth2:${project.access_token}@`);
             }
-        });
+        }
+        const { stdout, stderr, error } = await asyncExec(`cd /projects && git clone ${cloneUrl} ${project._id}`);
+        this.commandsError(error, stderr);
+        console.log(`stdout: ${stdout}`);
     }
 
     async pullProject(project) {
-        let cloneUrl = new String(project[0].git_url);
-
-        exec(`cd ../projects/${project[0]._id} && git pull origin master`, (error, stdout, stderr) => {
-            if (error) {
-                console.log(`error: ${error.message}`);
-                return;
-            }
-            if (stderr) {
-                console.log(`stderr: ${stderr}`);
-                return;
-            }
-            console.log(`stdout: ${stdout}`);
-        });
+        const { stdout, stderr, error } = await asyncExec(`cd /projects/${project[0]._id} && git pull origin master`);
+        this.commandsError(error, stderr);
+        console.log(`stdout: ${stdout}`);
+        return;
     }
 
     async scheduler(data) {
         const project = this.getByLabel(data.projectName);
-        
-    } 
+    }
+
+    async getBranches(project) {
+        const { stdout, stderr, error } = await asyncExec(`cd /projects/${project._id} && git branch -a`);
+        this.commandsError(error, stderr);
+        let branches = stdout.split('\n');
+        //Remove spaces added by git branch command
+        branches = branches.map(el => el.trim());
+        //Remove the first line returned by git branch wich is the current branch
+        branches.shift();
+        //Remove the second line returned by git branch wich is the current branch too
+        branches.shift();
+        //Remove empty string at the end returned by git branch
+        branches.pop();
+        return branches;
+    }
 }
 
 module.exports = new ProjectController();

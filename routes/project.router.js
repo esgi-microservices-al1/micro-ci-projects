@@ -25,6 +25,14 @@ router.get('/:id', async (req, res, next) => {
     res.json(project);
 });
 
+router.get('/branches/:id', async (req, res, next) => {
+    const project = await ProjectController.addProjectBranches(req.params.id);
+    if (project === undefined) {
+        return res.status(404).end();
+    }
+    res.json(project);
+});
+
 router.post('/', async(req, res, next) => {
     if (!req.body.label || !req.body.gitUrl || !req.body.gitHost) {
         return res.status(400).end();
