@@ -1,15 +1,38 @@
-version: '3.8'
+version: '2.1'
 
 services:
+    rabbitmq:
+        image: rabbitmq:3-management-alpine
+        restart: always
+        volumes:
+            - rabbitmq-data-volume:/var/lib/rabbitmq
+            - rabbitmq-log-volume:/var/log/rabbitmq
+            - ./enabled_plugins:/etc/rabbitmq/enabled_plugins
+        environment:
+            - RABBITMQ_DEFAULT_USER=${RABBITMQ_USERNAME:-guest}
+            - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD:-guest}
+        ports:
+            - ${MANAGEMENT_UI_HTTP_PORT:-8080}:15672
+            - ${AMQP091_PORT:-5672}:5672
+            - ${PROMETHEUS_PORT:-15692}:15692
+        # healthcheck:
+        #     test: curl -f https://localhost:40700 || exit 1
+
     server:
         container_name: microservice-server
         build: .
+        # restart: on-failure
         depends_on:
+            - rabbitmq
+                # condition: service_healthy
             - mongo
             - consul
         links:
+            - rabbitmq
             - mongo
             - consul
+        volumes:
+            - 'projects-repository:/projects'
         ports:
             - '3001:3000'
 
@@ -47,6 +70,9 @@ services:
 
 volumes:
     mongo-data:
+    projects-repository:
+    rabbitmq-data-volume:
+    rabbitmq-log-volume:
 
 networks:
-    consul-network:
+  consul-network:
