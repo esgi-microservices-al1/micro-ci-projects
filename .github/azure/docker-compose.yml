@@ -1,3 +1,33 @@
 version: '3'
 
 # Add your networks/volumes/services for your microservice
+services:
+  server:
+    container_name: microservice-server
+    build: .
+     restart: always
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+    links:
+      - mongo
+    volumes:
+      - './.docker/volume/projects-repository:/projects-repository'
+    ports:
+      - '3001:3000'
+
+  mongo:
+    image: mongo
+    restart: always
+    volumes:
+      - 'mongo-data:/data/db'
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+
+volumes:
+  mongo-data:
+  projects-repository:

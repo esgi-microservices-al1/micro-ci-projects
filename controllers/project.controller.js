@@ -31,6 +31,7 @@ class ProjectController {
 
         try {
             const savedProject = await project.save();
+            await this.projectsFolderExists();
             await this.cloneProject(savedProject);
             return savedProject;
         } catch(err) {
@@ -115,8 +116,8 @@ class ProjectController {
     async projectsFolderExists() {
         const { stdout, stderr, error } = await asyncExec('ls -a /');
         this.commandsError(error, stderr);
-        if (stdout.indexOf('projects') === -1) {
-            exec('cd / && mkdir -p projects', (error, stderr, stdout) => {
+        if (stdout.indexOf('projects-repository') === -1) {
+            exec('cd / && mkdir -p projects-repository', (error, stderr, stdout) => {
                 this.commandsError(error, stderr);
                 console.log(stdout);
                 return;
@@ -126,7 +127,7 @@ class ProjectController {
     }
 
     async checkProjectRepositoryExists(project) {
-        const { stdout, stderr, error } = await asyncExec('cd /projects && ls');
+        const { stdout, stderr, error } = await asyncExec('cd /projects-repository && ls');
         this.commandsError(error, stderr);
         if (stdout.indexOf(project._id) !== -1) {
             console.error(`Project with url: ${project.git_url}, already exists`);
@@ -148,13 +149,13 @@ class ProjectController {
                 cloneUrl = cloneUrl.replace("https://", `https://oauth2:${project.access_token}@`);
             }
         }
-        const { stdout, stderr, error } = await asyncExec(`cd /projects && git clone ${cloneUrl} ${project._id}`);
+        const { stdout, stderr, error } = await asyncExec(`cd /projects-repository && git clone ${cloneUrl} ${project._id}`);
         this.commandsError(error, stderr);
         console.log(`stdout: ${stdout}`);
     }
 
     async pullProject(project) {
-        const { stdout, stderr, error } = await asyncExec(`cd /projects/${project[0]._id} && git pull origin master`);
+        const { stdout, stderr, error } = await asyncExec(`cd /projects-repository/${project[0]._id} && git pull origin master`);
         this.commandsError(error, stderr);
         console.log(`stdout: ${stdout}`);
         return;
@@ -165,7 +166,7 @@ class ProjectController {
     }
 
     async getBranches(project) {
-        const { stdout, stderr, error } = await asyncExec(`cd /projects/${project._id} && git branch -a`);
+        const { stdout, stderr, error } = await asyncExec(`cd /projects-repository/${project._id} && git branch -a`);
         this.commandsError(error, stderr);
         let branches = stdout.split('\n');
         //Remove spaces added by git branch command
