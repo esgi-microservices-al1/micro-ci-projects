@@ -6,8 +6,10 @@ services:
         build: .
         depends_on:
             - mongo
+            - consul
         links:
             - mongo
+            - consul
         ports:
             - '3001:3000'
 
@@ -33,5 +35,18 @@ services:
             ME_CONFIG_MONGODB_ADMINUSERNAME: ${DB_USER}
             ME_CONFIG_MONGODB_ADMINPASSWORD: ${DB_PASSWORD}
 
+    consul:
+        image: consul
+        environment:
+        - CONSUL_BIND_INTERFACE=eth0
+        ports:
+        - 5000:8500
+        - 5001:8600
+        networks:
+        - consul-network
+
 volumes:
     mongo-data:
+
+networks:
+    consul-network:

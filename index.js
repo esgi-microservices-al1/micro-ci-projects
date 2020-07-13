@@ -8,6 +8,7 @@ const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const RouterBuilder = require('./routes');
 const ConsumerService = require('./service/consumer.service');
+const consul = require('./consul/consul');
 
 dotenv.config();
 
@@ -30,11 +31,17 @@ mongoose
     .catch(() => console.error("Database connection failed!"));
 
 RouterBuilder.build(app)
+
+consul.register();
+
 try {
-    ConsumerService.consumeWebHookQueue(process.env.AMQP_WEBHOOK_QUEUE_NAME)
+    ConsumerService.consumeWebHookQueue(process.env.AMQP_WEBHOOK_QUEUE_NAME);
+    ConsumerService.consumeSchedulerQueue(process.env.AMQP_SCHEDULER_QUEUE_NAME);
 } catch (ex) {
-    console.log(ex)
+    console.log(ex);
 }
+
+
 
 
 app.listen(port, () => console.log(`Server started on ${port}...`));
