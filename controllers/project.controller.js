@@ -88,12 +88,28 @@ class ProjectController {
         return project.save();
     }
 
-    async webHookProcess(url) {
-        if (!url) {
+    async schedulerProcess(inputString) {
+        const input = JSON.parse(inputString);
+        const project = await Project.findById(input.project);
+        if (project) {
+            console.log("project found");
+            const branches = await this.getBranches(project);
+            if (JSON.stringify(branches).indexOf(input.branch) !== -1) {
+                await this.checkoutProject(project, input.branch);
+                publisherService.publishToQueue(process.env.AMQP_PUBLISH_QUEUE_NAME, JSON.stringify(input));
+            } else {
+                throw `branch ${input.branch} does not exist in project with id ${input.project}`;
+            }
+        }
+    }
+
+    async webHookProcess(inputString) {
+        const input = JSON.parse(inputString);
+        if (!input.gitUrl) {
             console.error("No url was given!");
             return;
         }
-        const project = await this.getByRepository(url);
+        const project = await this.getByRepository(input.gitUrl);
         if (project == undefined) {
             return;
         }
@@ -178,6 +194,12 @@ class ProjectController {
         //Remove empty string at the end returned by git branch
         branches.pop();
         return branches;
+    }
+
+    async checkoutProject(project, branch) {
+        const { stdout, stderr, error } = await asyncExec(`cd /projects-repository/${project._id} && git checkout ${branch}`);
+        this.commandsError(error, stderr);
+        console.log(stdout);
     }
 }
 

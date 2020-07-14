@@ -6,7 +6,6 @@ exports.publishToQueue = async (queueName, data) => {
     amqp.connect(process.env.AMQP_URL, (error, connect) => {
         if (error) {
             throw error;
-        
         }
         connect.createChannel((err, channel) => {
             if (err) {
