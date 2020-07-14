@@ -15,8 +15,11 @@ exports.consumeSchedulerQueue = (queueName) => {
                 throw err;
             }
             console.log("\nQueue passed on scheduler\n");
+
             // Assert Queue
-            channel.assertQueue(queueName);
+            channel.assertQueue(queueName, {
+                durable: false
+            });
 
             // Receive Messages
             channel.consume(queueName, (msg) => {
