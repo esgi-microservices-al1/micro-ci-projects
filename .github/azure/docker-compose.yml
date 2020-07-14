@@ -15,7 +15,7 @@ services:
     volumes:
       - './.docker/volume/projects-repository:/projects-repository'
     ports:
-      - '3001:3000'
+      - '3011:3000'
 
   mongo:
     image: mongo
