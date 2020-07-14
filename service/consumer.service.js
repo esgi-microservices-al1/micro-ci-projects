@@ -10,6 +10,7 @@ exports.consumeSchedulerQueue = (queueName) => {
         }
         connect.createChannel((err, channel) => {
             if (err) {
+                console.log("Scheduler consume error");
                 throw err;
             }
             // Assert Queue
@@ -32,6 +33,7 @@ exports.consumeWebHookQueue = (queueName) => {
         }
         connect.createChannel((err, channel) => {
             if (err) {
+                console.log("WebHook consume error");
                 throw err;
             }
             channel.assertQueue(queueName);

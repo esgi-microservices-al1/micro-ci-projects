@@ -24,21 +24,24 @@ const details = new RegistrationDetails(process.env.APPLICATION_NAME,
 
 
 const register = () => {
-    console.log('REGISTER');
+    console.log('Consul register START');
     consul.agent.service.register(details, err => {
         console.log(details);
         if (err) { 
             console.log(err.message, err.stack); 
-            console.log("ERRRRREUUUUUUR")
+            console.log("Consul ERROR")
         }
-        else { console.log('consul good zkqhdkqz'); }
+        else { console.log('Consul Successfully Register'); }
     });
 
     const jsonId = { id: `service:${details.id}`, token: process.env.CONSUL_TOKEN || null };
 
     setInterval(() => {
         consul.agent.check.pass(jsonId, (err) => {
-            if (err) { console.log(err.message); }
+            if (err) { 
+                console.log("\n\nconsul error in interval\n\n");
+                console.log(err.message); 
+            }
         })
     }, 5000);
     
@@ -49,6 +52,8 @@ const register = () => {
 };
 
 function unregister() {
+
+    console.log('Unregister Consul')
     const toUnregister = {
         id: details.id,
         token: process.env.CONSUL_TOKEN || null };

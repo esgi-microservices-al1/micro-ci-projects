@@ -38,10 +38,8 @@ try {
     ConsumerService.consumeWebHookQueue(process.env.AMQP_WEBHOOK_QUEUE_NAME);
     ConsumerService.consumeSchedulerQueue(process.env.AMQP_SCHEDULER_QUEUE_NAME);
 } catch (ex) {
+    console.log('Consumer Error');
     console.log(ex);
 }
-
-
-
 
 app.listen(port, () => console.log(`Server started on ${port}...`));
