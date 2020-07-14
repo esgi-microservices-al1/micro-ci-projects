@@ -6,6 +6,7 @@ const RegistrationDetails = require('./registration.details');
 const consul = require('consul')({
     host: process.env.CONSUL_HOST,
     port: Number(process.env.CONSUL_PORT),
+    secure: false
 });
 
 console.log(process.env.CONSUL_HOST + ':' + process.env.CONSUL_PORT);
@@ -42,9 +43,7 @@ const register = () => {
         })
     }, 5000);
     
-    process.on('exit', unregister);
-    process.on('SIGINT', unregister);
-    process.on('uncaughtException', unregister);
+    process.on('exit' || 'SIGINT' || 'uncaughtException', unregister);
     
 };
 
@@ -55,6 +54,9 @@ function unregister() {
         id: details.id,
         token: process.env.CONSUL_TOKEN || null };
     consul.agent.service.deregister(toUnregister, (err) => {
+        if (err) {
+            console.log('Unregister error');
+        }
         process.exit(err ? 1 : 0);
     });
 }
