@@ -41,6 +41,6 @@ RouterBuilder.build(app)
 //     console.log(ex);
 // }
 
-consul.register();
+// consul.register();
 
 app.listen(port, () => console.log(`Server started on ${port}...`));
