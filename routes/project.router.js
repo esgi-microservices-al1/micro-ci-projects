@@ -49,7 +49,7 @@ router.post('/', async(req, res, next) => {
 router.post('/test', async(req, res, next) => {
     try {
         try {
-            await PublisherService.publishToQueue(process.env.AMQP_WEBHOOK_QUEUE_NAME, req.body.gitUrl);
+            await PublisherService.publishToQueue(process.env.AMQP_WEBHOOK_QUEUE_NAME, JSON.stringify(req.body));
             res.data = {"message-sent":true};
             res.status(200).send({ status: true, response: res.data});
         } catch (ex) {
@@ -57,6 +57,17 @@ router.post('/test', async(req, res, next) => {
         }
     } catch (error) {
         return res.status(404);
+    }
+})
+
+router.post('/test2', async(req, res, next) => {
+    try {
+        console.log(`\nReceived as body: ${JSON.stringify(req.body)}\n`);
+        await PublisherService.publishToQueue(process.env.AMQP_SCHEDULER_QUEUE_NAME, JSON.stringify(req.body));
+        res.data = {"message-sent":true};
+        res.status(200).send({ status: true, response: res.data});
+    } catch (ex) {
+        res.status(500).end()
     }
 })
 

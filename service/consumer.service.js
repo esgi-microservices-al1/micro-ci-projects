@@ -22,8 +22,9 @@ exports.consumeSchedulerQueue = (queueName) => {
             });
 
             // Receive Messages
-            channel.consume(queueName, (msg) => {
-                const input = JSON.parse(msg.content.toString());
+            channel.consume(queueName, async(msg) => {
+                const input = msg.content;
+                await ProjectController.schedulerProcess(input);
                 console.log(`[x] Received ${JSON.stringify(input)}`);
                 channel.ack(msg);
             });
