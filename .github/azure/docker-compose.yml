@@ -3,7 +3,7 @@ version: '3'
 # Add your networks/volumes/services for your microservice
 services:
   server:
-    container_name: microservice-server
+    container_name: projects-ci
     image: esgimicroci/al1-projects:latest
     restart: always
     env_file:
@@ -23,7 +23,7 @@ services:
     volumes:
       - 'mongo-data:/data/db'
     ports:
-      - 27017:27017
+      - 27099:27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${DB_USER}
       MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
