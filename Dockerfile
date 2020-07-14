@@ -12,5 +12,5 @@ RUN apt-get update && \
 
 COPY . .
 
-EXPOSE 3000
+EXPOSE 3011
 CMD [ "npm", "start" ]
