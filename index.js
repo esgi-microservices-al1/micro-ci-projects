@@ -37,6 +37,7 @@ try {
     ConsumerService.consumeWebHookQueue(process.env.AMQP_WEBHOOK_QUEUE_NAME);
     ConsumerService.consumeSchedulerQueue(process.env.AMQP_SCHEDULER_QUEUE_NAME);
 } catch (ex) {
+    console.log("\nConsume error\n");
     console.log(ex);
 }
 
