@@ -4,7 +4,7 @@ version: '3'
 services:
   server:
     container_name: microservice-server
-    build: .
+    image: esgimicroci/al1-projects:lastest
     restart: always
     env_file:
       - .env
