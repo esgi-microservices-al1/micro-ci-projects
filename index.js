@@ -32,15 +32,15 @@ mongoose
 
 RouterBuilder.build(app)
 
-// try {
-//     console.log("\nTrying to consume\n");
-//     ConsumerService.consumeWebHookQueue(process.env.AMQP_WEBHOOK_QUEUE_NAME);
-//     ConsumerService.consumeSchedulerQueue(process.env.AMQP_SCHEDULER_QUEUE_NAME);
-// } catch (ex) {
-//     console.log('Consumer Error');
-//     console.log(ex);
-// }
+try {
+    console.log("\nTrying to consume\n");
+    ConsumerService.consumeWebHookQueue(process.env.AMQP_WEBHOOK_QUEUE_NAME);
+    ConsumerService.consumeSchedulerQueue(process.env.AMQP_SCHEDULER_QUEUE_NAME);
+} catch (ex) {
+    console.log('Consumer Error');
+    console.log(ex);
+}
 
-// consul.register();
+consul.register();
 
 app.listen(port, () => console.log(`Server started on ${port}...`));
