@@ -77,6 +77,21 @@ class ProjectController {
         }
     }
 
+    async deleteProject(projectId) {
+        try {
+            const project = await Project.findById(projectId);
+            if (project) {
+                await this.deleteProjectFolder(project);
+                project.remove();
+            } else {
+                return false;
+            }
+        } catch (e) {
+            throw `error during delete: ${e}`;
+        }
+        return true;
+    }
+
     async addProjectBranches(projectId) {
         const project = await Project.findById(projectId);
         try {
@@ -198,6 +213,12 @@ class ProjectController {
 
     async checkoutProject(project, branch) {
         const { stdout, stderr, error } = await asyncExec(`cd /projects-repository/${project._id} && git checkout ${branch}`);
+        this.commandsError(error, stderr);
+        console.log(stdout);
+    }
+
+    async deleteProjectFolder(project) {
+        const { stdout, stderr, error } = await asyncExec(`rm -rf /projects-repository/${project._id}`);
         this.commandsError(error, stderr);
         console.log(stdout);
     }

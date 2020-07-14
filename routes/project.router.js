@@ -71,5 +71,20 @@ router.post('/test2', async(req, res, next) => {
     }
 })
 
+router.delete('/:id', async(req, res) => {
+    try {
+        if (!req.params.id) {
+            return res.status(400).end();
+        }
+        const isDeleted = await ProjectController.deleteProject(req.params.id);
+        if (!isDeleted) {
+            return res.status(404).end();
+        }
+        res.status(200).send("Project deleted!");
+    } catch (e) {
+        res.status(500);
+    }
+})
+
 module.exports = router;
 
