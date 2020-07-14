@@ -32,6 +32,7 @@ mongoose
 
 RouterBuilder.build(app)
 
+<<<<<<< HEAD
 // try {
 //     console.log("\nTrying to consume\n");
 //     ConsumerService.consumeWebHookQueue(process.env.AMQP_WEBHOOK_QUEUE_NAME);
@@ -40,6 +41,16 @@ RouterBuilder.build(app)
 //     console.log('Consumer Error');
 //     console.log(ex);
 // }
+=======
+try {
+    console.log("\nTrying to consume\n");
+    ConsumerService.consumeWebHookQueue(process.env.AMQP_WEBHOOK_QUEUE_NAME);
+    ConsumerService.consumeSchedulerQueue(process.env.AMQP_SCHEDULER_QUEUE_NAME);
+} catch (ex) {
+    console.log("\nConsume error\n");
+    console.log(ex);
+}
+>>>>>>> 038286bc6ea2417ebb725904e494ee82cce6c039
 
 consul.register();
 
