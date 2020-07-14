@@ -1,0 +1,229 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Micro CI Projects",
+    "description": "Swagger Projects API",
+    "version": "1.0"
+  },
+  "produces": [
+    "application/json"
+  ],
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Projects",
+      "description": "API Projects"
+    }
+  ],
+  "$schemes": [
+    "http"
+  ],
+  "paths": {
+    "/project": {
+      "get": {
+        "tags": [
+          "project"
+        ],
+        "summary": "Get all projects of the db",
+        "description": "",
+        "operationId": "getProjects",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Project"
+            }
+          },
+          "404": {
+            "description": "Empty project DB"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "project"
+        ],
+        "summary": "Add projects to the db",
+        "description": "",
+        "operationId": "addProject",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "project",
+            "schema": {
+              "type": "object",
+              "required": [
+                "label",
+                "gitUrl",
+                "gitHost"
+              ],
+              "properties": {
+                "label": {
+                  "type": "string"
+                },
+                "gitUrl": {
+                  "type": "string"
+                },
+                "gitHost": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Project"
+            }
+          },
+          "400": {
+            "description": "Missing parameters"
+          },
+          "409": {
+            "description": "Error during project creation"
+          }
+        }
+      }
+    },
+    "/project/{projectId}": {
+      "get": {
+        "tags": [
+          "project"
+        ],
+        "summary": "Get project by id from db",
+        "description": "",
+        "operationId": "getProjectsById",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Project"
+            }
+          },
+          "400": {
+            "description": "Missing parameters"
+          },
+          "404": {
+            "description": "Project Id Does Not Exist"
+          }
+        }
+      }
+    },
+    "/project/branch/{projectId}": {
+      "get": {
+        "tags": [
+          "project"
+        ],
+        "summary": "Get all Branches of Project",
+        "description": "",
+        "operationId": "getBranchesByProjectId",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Project"
+            }
+          },
+          "404": {
+            "description": "Project Id Does Not Exist"
+          }
+        }
+      }
+    },
+    "/project/test": {
+      "post": {
+        "tags": [
+          "project"
+        ],
+        "summary": "Use to test RabbitMQ",
+        "description": "",
+        "operationId": "",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/Project"
+            }
+          },
+          "404": {
+            "description": "Project Id Does Not Exist"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Project": {
+      "type": "object",
+      "properties": {
+        "label": {
+          "type": "string",
+          "description": "Project Name"
+        },
+        "git_url": {
+          "type": "string",
+          "description": "Url to Repository"
+        },
+        "access_token": {
+          "type": "string",
+          "description": "Token for private Repository"
+        },
+        "git_host": {
+          "type": "string",
+          "enum": [
+            "github",
+            "gitlab"
+          ],
+          "description": "Git Type"
+        },
+        "branches": {
+          "type": "array",
+          "items": "string",
+          "description": "List of Project Branches"
+        },
+        "storage_url": {
+          "type": "string"
+        },
+        "enable": {
+          "type": "boolean",
+          "description": "Project Status"
+        }
+      }
+    }
+  }
+}
