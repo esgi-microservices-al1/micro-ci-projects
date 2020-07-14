@@ -6,13 +6,15 @@ exports.consumeSchedulerQueue = (queueName) => {
     // Create Channel
     amqp.connect(process.env.AMQP_URL, (error, connect) => {
         if (error) {
+            console.log("\nAMQ connecting failed\n");
             throw error;
         }
         connect.createChannel((err, channel) => {
             if (err) {
-                console.log("Scheduler consume error");
+                console.log("\nAMQ channel failed\n");
                 throw err;
             }
+            console.log("\nQueue passed\n");
             // Assert Queue
             channel.assertQueue(queueName);
 
