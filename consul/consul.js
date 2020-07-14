@@ -20,9 +20,6 @@ const details = new RegistrationDetails(process.env.APPLICATION_NAME,
     process.env.HOST || 'localhost', process.env.PORT, 
     tags, process.env.CONSUL_TOKEN);
 
-
-
-
 const register = () => {
     console.log('REGISTER');
     consul.agent.service.register(details, err => {

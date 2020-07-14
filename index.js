@@ -32,8 +32,6 @@ mongoose
 
 RouterBuilder.build(app)
 
-consul.register();
-
 try {
     ConsumerService.consumeWebHookQueue(process.env.AMQP_WEBHOOK_QUEUE_NAME);
     ConsumerService.consumeSchedulerQueue(process.env.AMQP_SCHEDULER_QUEUE_NAME);
@@ -41,7 +39,6 @@ try {
     console.log(ex);
 }
 
-
-
+consul.register();
 
 app.listen(port, () => console.log(`Server started on ${port}...`));
