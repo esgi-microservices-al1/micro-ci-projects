@@ -5,7 +5,7 @@ services:
   server:
     container_name: microservice-server
     build: .
-     restart: always
+    restart: always
     env_file:
       - .env
     depends_on:
