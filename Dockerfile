@@ -1,5 +1,7 @@
 FROM node:lts
 
+LABEL AL1-PROJECTS=1
+
 WORKDIR /app
 
 COPY package*.json ./
